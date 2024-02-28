@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    tools {
+        maven 'maven'
+    }
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Hello World'
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: '03fb0f07-5374-4c7f-ad37-1904232e7ab3', url: 'https://github.com/kajalsalekar12/new.git']])
+                sh "mvn -Dmaven.test.failure.ignore=true clean package"
+            }
+        }
+    }
+    post{
+        always{
+            junit(
+                allowEmptyResults:true,
+                testResults: '*test-reports/.xml'
+                )
+        }
+    }
+}
